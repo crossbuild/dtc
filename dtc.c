@@ -29,6 +29,7 @@ int reservenum;		/* Number of memory reservation slots */
 int minsize;		/* Minimum blob size */
 int padsize;		/* Additional padding to blob */
 int phandle_format = PHANDLE_BOTH;	/* Use linux,phandle or phandle properties */
+int symbol_fixup_support = 0;
 
 static void fill_fullpaths(struct node *tree, const char *prefix)
 {
@@ -51,7 +52,7 @@ static void fill_fullpaths(struct node *tree, const char *prefix)
 #define FDT_VERSION(version)	_FDT_VERSION(version)
 #define _FDT_VERSION(version)	#version
 static const char usage_synopsis[] = "dtc [options] <input file>";
-static const char usage_short_opts[] = "qI:O:o:V:d:R:S:p:fb:i:H:sW:E:hv";
+static const char usage_short_opts[] = "qI:O:o:V:d:R:S:p:fb:i:H:sW:E:hv@";
 static struct option const usage_long_opts[] = {
 	{"quiet",            no_argument, NULL, 'q'},
 	{"in-format",         a_argument, NULL, 'I'},
@@ -71,6 +72,7 @@ static struct option const usage_long_opts[] = {
 	{"error",             a_argument, NULL, 'E'},
 	{"help",             no_argument, NULL, 'h'},
 	{"version",          no_argument, NULL, 'v'},
+	{"symbols",          no_argument, NULL, '@'},
 	{NULL,               no_argument, NULL, 0x0},
 };
 static const char * const usage_opts_help[] = {
@@ -101,6 +103,7 @@ static const char * const usage_opts_help[] = {
 	"\n\tEnable/disable errors (prefix with \"no-\")",
 	"\n\tPrint this help and exit",
 	"\n\tPrint version and exit",
+	"\n\tSymbols and Fixups support",
 	NULL,
 };
 
@@ -186,7 +189,9 @@ int main(int argc, char *argv[])
 		case 'E':
 			parse_checks_option(false, true, optarg);
 			break;
-
+		case '@':
+			symbol_fixup_support = 1;
+			break;
 		case 'h':
 			usage(NULL);
 		default:
